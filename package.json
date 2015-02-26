@@ -4,8 +4,16 @@
   "description": "A web-based notebook with Apache Spark",
   "main": "index.coffee",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "coffee index.coffee"
   },
   "author": "jigsaw (http://jgs.me)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "coffee-script": "^1.9.1",
+    "koa": "^0.18.0",
+    "koa-jade": "^0.3.1",
+    "koa-router": "^4.2.0",
+    "koa-static": "^1.4.9"
+  }
 }
