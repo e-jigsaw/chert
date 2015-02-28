@@ -1,4 +1,4 @@
-koa = require 'koa'
+koa = require 'koa.io'
 Router = require 'koa-router'
 serve = require 'koa-static'
 jade = require 'koa-jade'
@@ -6,35 +6,58 @@ React = require 'react'
 season = require 'season'
 mongoose = require 'mongoose'
 App = require './src/components/index'
+run = require './src/run'
 app = koa()
 router = Router()
 
 config = season.readFileSync '.config.cson'
 mongoose.connect config.mongodb
-Notebook = mongoose.model 'Notebook',
+Notebook = mongoose.model 'Notebooks',
   notes: [
-    command: String
-    result: String
+    type: mongoose.Schema.ObjectId
+    ref: 'Notes'
   ]
+Note = mongoose.model 'Notes',
+  type: String
+  body: String
+  result: String
 
 app.use serve 'build'
 app.use jade.middleware
   viewPath: "#{__dirname}/views"
 
 router.get '/', ->
-  yield @render 'index',
+  @render 'index',
     markup: React.renderToString React.createElement(App, {routes: '/'})
 
-router.get '/new', (next)->
+router.get '/new', ->
   nb = yield Notebook.create {}
   @redirect "/n/#{nb._id}"
-  yield next
 
-router.get '/n/:id', (next)->
-  @body = "Hello #{@params.id}"
-  yield next
+router.get '/n/:id', ->
+  nb = yield Notebook.findById(@params.id).populate('notes').exec()
+  yield @render 'index',
+    markup: React.renderToString React.createElement(App, {routes: @request.url, initialData: nb})
+    data: JSON.stringify nb
 
 app.use router.routes()
+
+app.io.route 'new', ->
+  nb = yield Notebook.findById(@data[0].id).exec()
+  n = new Note
+    type: 'md'
+    body: ''
+    result: ''
+  nb.notes.push n._id
+  n.save (err)=> nb.save (err)=> @emit 'created', n._id
+
+app.io.route 'update', ->
+  note = @data[0]
+  n = yield Note.findById(note.id).exec()
+  n.type = note.type
+  n.body = note.body
+  n.result = run note
+  n.save (err)=> @emit 'updated', n
 
 port = process.env.PORT || 3000
 app.listen port

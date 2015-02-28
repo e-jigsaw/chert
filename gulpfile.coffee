@@ -20,7 +20,7 @@ gulp.task 'webpack', ->
 gulp.task 'default', ['webpack']
 gulp.task 'watch', ['webpack', 'start'], ->
   gulp.watch 'src/**/*.coffee', ['webpack']
-  gulp.watch 'index.coffee', ['start']
+  gulp.watch ['index.coffee', 'src/components/*.coffee'], ['start']
 gulp.task 'start', ->
   start = ->
     child = spawn './node_modules/.bin/coffee', ['index.coffee'],
