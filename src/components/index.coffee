@@ -9,5 +9,6 @@ module.exports = React.createClass
       key: 'container'
     , [
       React.createElement header
-      React.createElement toppage
+      switch
+        when @props.routes is '/' then React.createElement toppage
     ]
