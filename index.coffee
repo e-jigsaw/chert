@@ -2,6 +2,8 @@ koa = require 'koa'
 Router = require 'koa-router'
 serve = require 'koa-static'
 jade = require 'koa-jade'
+React = require 'react'
+App = require './src/components/index'
 app = koa()
 router = Router()
 
@@ -10,7 +12,8 @@ app.use jade.middleware
   viewPath: "#{__dirname}/views"
 
 router.get '/', ->
-  yield @render 'index'
+  yield @render 'index',
+    markup: React.renderToString React.createElement(App)
 
 router.get '/:id', (next)->
   @body = "Hello #{@params.id}"

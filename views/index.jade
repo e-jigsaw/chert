@@ -2,6 +2,12 @@ doctype html
 html
   head
     meta(charset='utf-8')
-    title test
+    title ignite
+    style.
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
   body
-    h1 It works!
+    #app!= markup
+    script(src='/index.js', type='text/javascript')
