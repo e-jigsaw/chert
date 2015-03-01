@@ -11,9 +11,13 @@ module.exports = React.createClass
     , [
       React.createElement header
       switch
-        when @props.routes is '/' then React.createElement toppage
+        when @props.routes is '/'
+          React.createElement toppage,
+            key: 'toppage-element'
+            notebooks: @props.initialData
         when @props.routes.match /^\/n\//
           React.createElement notebook,
+            key: 'notebook-element'
             id: @props.routes.split('/')[2]
             name: @props.initialData.name
             notes: @props.initialData.notes

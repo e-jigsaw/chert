@@ -28,8 +28,10 @@ app.use jade.middleware
   viewPath: "#{__dirname}/views"
 
 router.get '/', ->
-  @render 'index',
-    markup: React.renderToString React.createElement(App, {routes: '/'})
+  nbs = yield Notebook.find({}).exec()
+  yield @render 'index',
+    markup: React.renderToString React.createElement(App, {routes: '/', initialData: nbs})
+    data: JSON.stringify nbs
 
 router.get '/new', ->
   nb = yield Notebook.create

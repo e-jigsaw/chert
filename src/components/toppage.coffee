@@ -1,10 +1,12 @@
 React = require 'react'
+NBLink = require './notebooksLink'
 
 module.exports = React.createClass
   displayName: 'toppage'
   styles:
     container:
       padding: '.5em 1em .5em 1em'
+
   render: ->
     React.DOM.div
       key: 'toppage'
@@ -26,4 +28,10 @@ module.exports = React.createClass
           href: '/new'
         , 'Create new notebook'
       ]
+      React.DOM.h2
+        key: 'notebooksLink-header'
+      , 'Notebooks'
+      React.createElement NBLink,
+        key: 'notebooksLink'
+        notebooks: @props.notebooks
     ]
