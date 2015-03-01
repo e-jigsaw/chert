@@ -31,7 +31,7 @@ module.exports = React.createClass
     @editor.setValue @props.body
     @editor.clearSelection()
     @editor.moveCursorToPosition @props.cursor
-    @editor.focus() if opt.focus
+    @editor.focus()
     @editor.commands.addCommand
       name: 'run'
       bindKey:
@@ -40,12 +40,7 @@ module.exports = React.createClass
       exec: => @run()
 
   componentDidMount: ->
-    @ace
-      focus: false
-
-  componentDidUpdate: ->
-    @ace
-      focus: true
+    @ace()
 
   render: ->
     React.DOM.div

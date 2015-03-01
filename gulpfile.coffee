@@ -17,10 +17,6 @@ gulp.task 'webpack', ->
         filename: 'index.js'
     .pipe gulp.dest 'build'
 
-gulp.task 'default', ['webpack']
-gulp.task 'watch', ['webpack', 'start'], ->
-  gulp.watch 'src/**/*.coffee', ['webpack']
-  gulp.watch ['index.coffee', 'src/components/*.coffee'], ['start']
 gulp.task 'start', ->
   start = ->
     child = spawn './node_modules/.bin/coffee', ['index.coffee'],
@@ -33,3 +29,12 @@ gulp.task 'start', ->
     child.on 'exit', -> start()
     child.kill()
   else start()
+
+gulp.task 'assets', ->
+  gulp.src 'node_modules/github-markdown-css/github-markdown.css'
+    .pipe gulp.dest 'build'
+
+gulp.task 'default', ['webpack', 'assets']
+gulp.task 'watch', ['webpack', 'assets', 'start'], ->
+  gulp.watch 'src/**/*.coffee', ['webpack']
+  gulp.watch ['index.coffee', 'src/components/*.coffee'], ['start']

@@ -12,6 +12,7 @@ module.exports = React.createClass
         [
           React.DOM.div
             key: "#{@props.id}-note-result-body"
+            className: 'markdown-body'
             dangerouslySetInnerHTML:
               __html: @props.data
         ]
