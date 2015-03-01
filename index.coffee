@@ -13,6 +13,7 @@ router = Router()
 config = season.readFileSync '.config.cson'
 mongoose.connect config.mongodb
 Notebook = mongoose.model 'Notebooks',
+  name: String
   notes: [
     type: mongoose.Schema.ObjectId
     ref: 'Notes'
@@ -31,7 +32,8 @@ router.get '/', ->
     markup: React.renderToString React.createElement(App, {routes: '/'})
 
 router.get '/new', ->
-  nb = yield Notebook.create {}
+  nb = yield Notebook.create
+    name: "Notebook #{new Date()}"
   @redirect "/n/#{nb._id}"
 
 router.get '/n/:id', ->
@@ -58,6 +60,12 @@ app.io.route 'update', ->
   n.body = note.body
   n.result = run note
   n.save (err)=> @emit 'updated', n
+
+app.io.route 'changeName', ->
+  notebook = @data[0]
+  nb = yield Notebook.findById(notebook.id).exec()
+  nb.name = notebook.name
+  nb.save (err)=> @emit 'changeNameSuccess'
 
 port = process.env.PORT || 3000
 app.listen port

@@ -1,6 +1,7 @@
 React = require 'react'
 Immutable = require 'immutable'
 Note = require './note'
+Name = require './noteName'
 
 module.exports = React.createClass
   displayName: 'notebook'
@@ -30,7 +31,9 @@ module.exports = React.createClass
         cursor:
           row: 0
           column: 0
+
     notes: Immutable.List notes
+    name: @props.name
 
   new: ->
     @socket.emit 'new',
@@ -41,6 +44,13 @@ module.exports = React.createClass
       notes: @state.notes.map (note)->
         if note._id is updatedNote.data._id then updatedNote else note
     , => @socket.emit 'update', updatedNote.data
+
+  changeName: (newName)->
+    @socket.emit 'changeName',
+      id: @props.id
+      name: newName
+    @setState
+      name: newName
 
   notes: -> @state.notes.map (note)=>
     React.createElement Note,
@@ -57,6 +67,10 @@ module.exports = React.createClass
       key: 'notebook-container'
       style: @styles.container
     , [
+      React.createElement Name,
+        key: "#{@props.id}-name"
+        data: @state.name
+        changeName: @changeName
       React.DOM.div
         key: 'notebook-notes-container'
       , @notes().toArray()

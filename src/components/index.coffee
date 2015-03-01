@@ -15,5 +15,6 @@ module.exports = React.createClass
         when @props.routes.match /^\/n\//
           React.createElement notebook,
             id: @props.routes.split('/')[2]
+            name: @props.initialData.name
             notes: @props.initialData.notes
     ]
