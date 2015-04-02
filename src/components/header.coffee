@@ -19,5 +19,5 @@ module.exports = React.createClass
         key: 'header-logo-a'
         style: @styles.logo
         href: '/'
-      , 'ignite'
+      , 'chert'
     ]

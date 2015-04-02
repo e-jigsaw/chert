@@ -14,11 +14,11 @@ module.exports = React.createClass
     , [
       React.DOM.h1
         key: 'toppage-header'
-      , 'Welcome ignite'
+      , 'Welcome chert'
     ,
       React.DOM.p
         key: 'toppage-description'
-      , 'Ignite is a Web-based notebook tool with Apache Spark.'
+      , 'Chert is a Web-based notebook tool with Apache Spark.'
     ,
       React.DOM.p
         key: 'toppage-notelink-container'
