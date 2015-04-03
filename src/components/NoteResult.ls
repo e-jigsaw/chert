@@ -1,24 +1,24 @@
-React = require 'react'
+{Component, DOM} = require \react
 
-module.exports = React.createClass
-  displayName: 'noteResult'
+module.exports = class NoteResult extends Component
+  displayName: \noteResult
   styles:
     container:
-      minHeight: '300px'
+      minHeight: \300px
 
   generate: ->
     switch @props.type
       when 'md'
         [
-          React.DOM.div
+          DOM.div do
             key: "#{@props.id}-note-result-body"
-            className: 'markdown-body'
+            className: \markdown-body
             dangerouslySetInnerHTML:
               __html: @props.data
         ]
 
   render: ->
-    React.DOM.div
+    DOM.div do
       key: "#{@props.id}-note-result-container"
       style: @styles.container
-    , @generate()
+      , @generate!
