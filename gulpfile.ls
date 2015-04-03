@@ -4,7 +4,7 @@ webpack = require \gulp-webpack
 child = null
 
 gulp.task \webpack , ->
-  gulp.src \src/index.coffee
+  gulp.src \src/index.ls
     .pipe webpack do
       resolve:
         extensions: [
@@ -23,7 +23,7 @@ gulp.task \webpack , ->
 
 gulp.task \start , ->
   start = ->
-    child = spawn \./node_modules/.bin/coffee , [ \index.coffee ],
+    child = spawn \./node_modules/.bin/lsc , [ \index.ls ],
       stdio: \inherit
     child.on \error , ->
       child.kill!
