@@ -1,12 +1,15 @@
-koa = require \koa.io
-Router = require \koa-router
-serve = require \koa-static
-jade = require \koa-jade
-React = require \react
-require! \season
-require! \mongoose
-App = require \./src/components/index
-run = require \./src/run
+require! {
+  \koa.io : koa
+  \koa-router : Router
+  \koa-static : serve
+  \koa-jade : jade
+  react : React
+  season
+  mongoose
+  \./src/components/App
+  \./src/run
+}
+
 app = koa!
 router = Router!
 

@@ -1,7 +1,9 @@
-{Component, DOM, createElement} = require \react
-require! \./Header
-require! \./Toppage
-require! \./Notebook
+require! {
+  react: {Component, DOM, createElement}
+  \./Header
+  \./Toppage
+  \./Notebook
+}
 
 module.exports = class App extends Component
   displayName: \App
@@ -9,7 +11,7 @@ module.exports = class App extends Component
   render: ->
     DOM.div do
       key: \container
-      , [
+      [
         createElement Header
         switch
           when @props.routes is \/

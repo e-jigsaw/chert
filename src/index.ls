@@ -1,10 +1,12 @@
-React = require \react
-App = require \./components/index
+require! {
+  react : {render, createFactory}
+  \./components/App
+}
 
-React.render React.createElement App,
+render createFactory(App) do
   routes: location.pathname
   initialData: document
     .getElementById \initialData
     .getAttribute \data-json
     |> JSON.parse
-  , document.getElementById \app
+, document.getElementById \app

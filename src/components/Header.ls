@@ -1,4 +1,6 @@
-{Component, DOM} = require 'react'
+require! {
+  react: {Component, DOM}
+}
 
 module.exports = class Header extends Component
   displayName: \header
@@ -16,7 +18,7 @@ module.exports = class Header extends Component
       key: \header
       style: @styles.container
       , [
-        DOM.a
+        DOM.a do
           key: \header-logo-a
           style: @styles.logo
           href: \/

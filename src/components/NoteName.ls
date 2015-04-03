@@ -1,6 +1,11 @@
-{Component, DOM} = require \react
+require! {
+  react: {Component, DOM}
+}
 
 module.exports = class NoteName extends Component
+  ->
+    @state =
+      buttonEnable: false
   displayName: \noteName
   styles:
     container:
@@ -10,9 +15,6 @@ module.exports = class NoteName extends Component
       textAlign: \right
     button:
       marginLeft: \1em
-
-  getInitialState: ->
-    buttonEnable: false
 
   check: (event)->
     @setState do
@@ -33,16 +35,16 @@ module.exports = class NoteName extends Component
       key: "#{@props.id}-note-name-container"
       style: @styles.container
       className: \pure-form
-      , [
-        DOM.input
+      [
+        DOM.input do
           key: "#{@props.id}-note-name-input"
           defaultValue: @props.data
           ref: \input
           onKeyUp: @check
-        DOM.button
+        DOM.button do
           key: "#{@props.id}-note-name-button"
           className: @buttonClass!
           style: @styles.button
           onClick: @changeName
-          , \Update
+          \Update
       ]

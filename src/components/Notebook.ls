@@ -1,9 +1,22 @@
-{Component, createElement, DOM} = require \react
-Immutable = require \immutable
-require! \./Note
-Name = require \./noteName
+require! {
+  react: {Component, createElement, DOM}
+  immutable: Immutable
+  \./Note
+  \./noteName : Name
+}
 
 module.exports = class Notebook extends Component
+  (props)->
+    @state =
+      notes: props.notes.map (data)->
+        data: data
+        config:
+          cursor:
+            row: 0
+            column: 0
+      |> Immutable.List
+      name: props.name
+
   displayName: 'notebook'
   styles:
     container:
@@ -14,41 +27,32 @@ module.exports = class Notebook extends Component
 
   componentDidMount: ->
     @socket = io!
-    @socket.on \created , (message)->
+    @socket.on \created, (message)->
       console.log message
-    @socket.on \updated , (data)~>
+    @socket.on \updated, (data)~>
       @setState do
         notes: @state.notes.map (note)->
-          if note.data.id is data._id
+          if note.data._id is data._id
             note.data = data
             note
           else note
 
-  getInitialState: ->
-    notes = @props.notes.map (data)->
-      data: data
-      config:
-        cursor:
-          row: 0
-          column: 0
-
-    notes: Immutable.List notes
-    name: @props.name
-
   new: ->
-    @socket.emit \new ,
+    @socket.emit \new,
       id: @props.id
 
-  run: (updatedNote)->
+  run: (updatedNote)~>
     @setState do
       notes: @state.notes.map (note)->
-        if note._id is updatedNote.data._id then updatedNote else note
-      , ~> @socket.emit \update , updatedNote.data
+        if note.data._id is updatedNote.data._id then updatedNote else note
+      ~>
+        @socket.emit \update, updatedNote.data
 
   changeName: (newName)->
-    @socket.emit \changeName ,
+    @socket.emit \changeName,
       id: @props.id
       name: newName
+
     @setState do
       name: newName
 
@@ -66,18 +70,18 @@ module.exports = class Notebook extends Component
     DOM.div do
       key: \notebook-container
       style: @styles.container
-      , [
+      [
         createElement Name,
           key: "#{@props.id}-name"
           data: @state.name
           changeName: @changeName
-        DOM.div
+        DOM.div do
           key: \notebook-notes-container
-          , @notes!.toArray!
-        DOM.button
+          @notes!.toArray!
+        DOM.button do
           key: \notebook-new-note-button
           className: 'pure-button pure-button-primary'
           style: @styles.newButton
           onClick: @new
-          , \+
+          \+
       ]

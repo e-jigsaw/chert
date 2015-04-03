@@ -1,4 +1,6 @@
-require! \marked
+require! {
+  marked
+}
 
 module.exports = (note)->
   switch note.type

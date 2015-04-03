@@ -1,8 +1,14 @@
-{Component, DOM, createElement} = require \react
-Controller = require \./noteController
-Result = require \./noteResult
+require! {
+  react: {Component, DOM, createElement}
+  \./noteController : Controller
+  \./noteResult : Result
+}
 
 module.exports = class Note extends Component
+  (props)->
+    @state =
+      type: props.type
+
   displayName: \note
   styles:
     container:
@@ -12,10 +18,7 @@ module.exports = class Note extends Component
     editor:
       height: \300px
 
-  getInitialState: ->
-    type: @props.type
-
-  run: ->
+  run: ~>
     @props.run do
       data:
         id: @props.id
@@ -27,7 +30,7 @@ module.exports = class Note extends Component
   ace: (opt)->
     @editor = ace.edit "#{@props.id}-note-body"
     @editor.setTheme \ace/theme/chrome
-    @editor.getSession().setMode \ace/mode/markdown
+    @editor.getSession!.setMode \ace/mode/markdown
     @editor.setValue @props.body
     @editor.clearSelection!
     @editor.moveCursorToPosition @props.cursor

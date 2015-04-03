@@ -1,4 +1,6 @@
-{Component, DOM} = require \react
+require! {
+  react: {Component, DOM}
+}
 
 module.exports = class NoteResult extends Component
   displayName: \noteResult
@@ -8,7 +10,7 @@ module.exports = class NoteResult extends Component
 
   generate: ->
     switch @props.type
-      when 'md'
+      when \md
         [
           DOM.div do
             key: "#{@props.id}-note-result-body"
@@ -21,4 +23,4 @@ module.exports = class NoteResult extends Component
     DOM.div do
       key: "#{@props.id}-note-result-container"
       style: @styles.container
-      , @generate!
+      @generate!
