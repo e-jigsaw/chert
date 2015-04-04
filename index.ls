@@ -15,13 +15,13 @@ router = Router!
 
 config = season.readFileSync \.config.cson
 mongoose.connect config.mongodb
-Notebook = mongoose.model \Notebooks ,
+Notebook = mongoose.model \Notebooks,
   name: String
   notes: [
     type: mongoose.Schema.ObjectId
     ref: \Notes
   ]
-Note = mongoose.model \Notes ,
+Note = mongoose.model \Notes,
   type: String
   body: String
   result: String
@@ -30,7 +30,7 @@ app.use serve \build
 app.use jade.middleware do
   viewPath: "#{__dirname}/views"
 
-router.get \/ , ->*
+router.get \/, ->*
   nbs = yield Notebook.find!.exec!
   yield @render 'index',
     markup: React.renderToString React.createElement App,
@@ -38,17 +38,17 @@ router.get \/ , ->*
       initialData: nbs
     data: JSON.stringify nbs
 
-router.get \/new , ->*
+router.get \/new, ->*
   nb = yield Notebook.create do
     name: "Notebook #{new Date()}"
   @redirect "/n/#{nb._id}"
 
-router.get \/n/:id , ->*
+router.get \/n/:id, ->*
   nb = yield Notebook
     .findById @params.id
     .populate \notes
     .exec!
-  yield @render \index ,
+  yield @render \index,
     markup: React.renderToString React.createElement App,
       routes: @request.url
       initialData: nb
@@ -56,7 +56,7 @@ router.get \/n/:id , ->*
 
 app.use router.routes!
 
-app.io.route \new , ->*
+app.io.route \new, ->*
   nb = yield Notebook
     .findById @data[0].id
     .exec!
@@ -65,9 +65,9 @@ app.io.route \new , ->*
     body: ''
     result: ''
   nb.notes.push n._id
-  n.save (err)~> nb.save (err)~> @emit \created , n._id
+  n.save (err)~> nb.save (err)~> @emit \created, n._id
 
-app.io.route \update , ->*
+app.io.route \update, ->*
   note = @data[0]
   n = yield Note
     .findById note.id
