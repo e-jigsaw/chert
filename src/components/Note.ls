@@ -9,6 +9,7 @@ module.exports = class Note extends Component
   (props)->
     @state =
       type: props.type
+      isExpand: props.isExpand
 
   displayName: \note
   styles:
@@ -19,6 +20,8 @@ module.exports = class Note extends Component
       marginBottom: \2em
     editor:
       height: \300px
+    hideEditor:
+      display: \none
 
   run: ~>
     @props.run do
@@ -28,6 +31,12 @@ module.exports = class Note extends Component
         body: @editor.getValue!
       config:
         cursor: @editor.getCursorPosition!
+
+  toggleExpand: ~>
+    @setState do
+      isExpand: !@state.isExpand
+      ~>
+        @props.toggleExpand @props.id
 
   typeChange: (event)~>
     @setState do
@@ -63,10 +72,12 @@ module.exports = class Note extends Component
           run: @run
           type: @state.type
           typeChange: @typeChange
+          isExpand: @props.isExpand
+          toggleExpand: @toggleExpand
         DOM.div do
           key: "#{@props.id}-note-body"
           id: "#{@props.id}-note-body"
-          style: @styles.editor
+          style: if @state.isExpand then @styles.editor else @styles.hideEditor
         createElement Result,
           key: "#{@props.id}-note-result"
           id: @props.id

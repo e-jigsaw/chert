@@ -27,9 +27,9 @@ module.exports = class Notebook extends Component
 
   componentDidMount: ->
     @socket = io!
-    @socket.on \created, (message)->
+    @socket.on \notebook:created, (message)->
       console.log message
-    @socket.on \updated, (data)~>
+    @socket.on \note:updated, (data)~>
       @setState do
         notes: @state.notes.map (note)->
           if note.data._id is data._id
@@ -38,23 +38,22 @@ module.exports = class Notebook extends Component
           else note
 
   new: ~>
-    @socket.emit \new,
+    @socket.emit \notebook:new,
       id: @props.id
 
   run: (updatedNote)~>
-    @setState do
-      notes: @state.notes.map (note)->
-        if note.data._id is updatedNote.data._id then updatedNote else note
-      ~>
-        @socket.emit \update, updatedNote.data
+    @socket.emit \note:update, updatedNote.data
 
   changeName: (newName)->
-    @socket.emit \changeName,
+    @socket.emit \notebook:changeName,
       id: @props.id
       name: newName
 
     @setState do
       name: newName
+
+  toggleExpand: (id)~>
+    @socket.emit \note:toggleExpand, id: id
 
   notes: -> @state.notes.map (note)~>
     createElement Note,
@@ -63,8 +62,10 @@ module.exports = class Notebook extends Component
       type: note.data.type
       body: note.data.body
       result: note.data.result
+      isExpand: note.data.isExpand
       cursor: note.config.cursor
       run: @run
+      toggleExpand: @toggleExpand
 
   render: ->
     DOM.div do
