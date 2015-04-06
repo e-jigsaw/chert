@@ -2,6 +2,7 @@ require! {
   react: {Component, DOM, createElement}
   \./noteController : Controller
   \./noteResult : Result
+  \../adapters.config : config
 }
 
 module.exports = class Note extends Component
@@ -15,6 +16,7 @@ module.exports = class Note extends Component
       border: '1px solid #b6b6b6'
       borderRadius: \5px
       padding: \.3em
+      marginBottom: \2em
     editor:
       height: \300px
 
@@ -27,10 +29,15 @@ module.exports = class Note extends Component
       config:
         cursor: @editor.getCursorPosition!
 
+  typeChange: (event)~>
+    @setState do
+      type: event.target.value
+      , ~> @ace!
+
   ace: (opt)->
     @editor = ace.edit "#{@props.id}-note-body"
     @editor.setTheme \ace/theme/chrome
-    @editor.getSession!.setMode \ace/mode/markdown
+    @editor.getSession!.setMode config[@state.type].theme
     @editor.setValue @props.body
     @editor.clearSelection!
     @editor.moveCursorToPosition @props.cursor

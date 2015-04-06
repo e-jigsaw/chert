@@ -1,5 +1,6 @@
 require! {
   react: {Component, DOM}
+  \../adapters.config : config
 }
 
 module.exports = class NoteController extends Component
@@ -7,6 +8,14 @@ module.exports = class NoteController extends Component
   styles:
     select:
       marginRight: \.4em
+
+  adapters: ->
+    Object.keys config
+      .map (key)~>
+        DOM.option do
+          key: "#{@props.id}-note-controller-select-#{key}"
+          value: key
+          config[key].name
 
   render: ->
     DOM.div do
@@ -16,11 +25,9 @@ module.exports = class NoteController extends Component
         DOM.select do
           key: "#{@props.id}-note-controller-select"
           style: @styles.select
-          [
-            DOM.option do
-              key: "#{@props.id}-note-controller-select-md"
-              \Markdown
-          ]
+          onChange: @props.typeChange
+          defaultValue: @props.type
+          @adapters!
         DOM.button do
           key: "#{@props.id}-note-controller-run"
           className: 'pure-button pure-button-primary'

@@ -37,7 +37,7 @@ module.exports = class Notebook extends Component
             note
           else note
 
-  new: ->
+  new: ~>
     @socket.emit \new,
       id: @props.id
 
