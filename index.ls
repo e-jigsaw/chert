@@ -26,6 +26,7 @@ Note = mongoose.model \Notes,
   type: String
   body: String
   result: String
+  isExpand: Boolean
 
 app.use serve \build
 app.use jade.middleware do
@@ -57,7 +58,7 @@ router.get \/n/:id, ->*
 
 app.use router.routes!
 
-app.io.route \new, ->*
+app.io.route \notebook:new, ->*
   nb = yield Notebook
     .findById @data[0].id
     .exec!
@@ -65,10 +66,19 @@ app.io.route \new, ->*
     type: \md
     body: ''
     result: ''
+    isExpand: true
   nb.notes.push n._id
-  n.save (err)~> nb.save (err)~> @emit \created, n._id
+  n.save (err)~> nb.save (err)~> @emit \notebook:created, n._id
 
-app.io.route \update, ->*
+app.io.route \notebook:changeName, ->*
+  notebook = @data[0]
+  nb = yield Notebook
+    .findById notebook.id
+    .exec!
+  nb.name = notebook.name
+  nb.save (err)~> @emit \notebook:changeNameSuccess
+
+app.io.route \note:update, ->*
   note = @data[0]
   n = yield Note
     .findById note.id
@@ -76,15 +86,15 @@ app.io.route \update, ->*
   n.type = note.type
   n.body = note.body
   n.result = adapters[note.type].run note
-  n.save (err)~> @emit \updated, n
+  n.save (err)~> @emit \note:updated, n
 
-app.io.route \changeName, ->*
-  notebook = @data[0]
-  nb = yield Notebook
-    .findById notebook.id
+app.io.route \note:toggleExpand, ->*
+  note = @data[0]
+  n = yield Note
+    .findById note.id
     .exec!
-  nb.name = notebook.name
-  nb.save (err)~> @emit \changeNameSuccess
+  n.isExpand = !n.isExpand
+  n.save (err)~> @emit \note:toggleExpandSuccess
 
 port = process.env.PORT or 3000
 app.listen port
