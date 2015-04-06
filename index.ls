@@ -3,15 +3,16 @@ require! {
   \koa-router : Router
   \koa-static : serve
   \koa-jade : jade
-  react : React
+  react: {renderToString, createElement}
   season
   mongoose
   \./src/components/App
-  \./src/run
+  \./src/loadAdapters
 }
 
 app = koa!
 router = Router!
+adapters = loadAdapters!
 
 config = season.readFileSync \.config.cson
 mongoose.connect config.mongodb
@@ -32,8 +33,8 @@ app.use jade.middleware do
 
 router.get \/, ->*
   nbs = yield Notebook.find!.exec!
-  yield @render 'index',
-    markup: React.renderToString React.createElement App,
+  yield @render \index,
+    markup: renderToString createElement App,
       routes: \/
       initialData: nbs
     data: JSON.stringify nbs
@@ -49,7 +50,7 @@ router.get \/n/:id, ->*
     .populate \notes
     .exec!
   yield @render \index,
-    markup: React.renderToString React.createElement App,
+    markup: renderToString createElement App,
       routes: @request.url
       initialData: nb
     data: JSON.stringify nb
@@ -74,7 +75,7 @@ app.io.route \update, ->*
     .exec!
   n.type = note.type
   n.body = note.body
-  n.result = run note
+  n.result = adapters[note.type].run note
   n.save (err)~> @emit \updated, n
 
 app.io.route \changeName, ->*
