@@ -10,6 +10,7 @@ module.exports = class Note extends Component
     @state =
       type: props.type
       isExpand: props.isExpand
+      height: \300px
 
   displayName: \note
   styles:
@@ -18,10 +19,6 @@ module.exports = class Note extends Component
       borderRadius: \5px
       padding: \.3em
       marginBottom: \2em
-    editor:
-      height: \300px
-    hideEditor:
-      display: \none
 
   run: ~>
     @props.run do
@@ -51,12 +48,26 @@ module.exports = class Note extends Component
     @editor.clearSelection!
     @editor.moveCursorToPosition @props.cursor
     @editor.focus!
+    @editor.on \change, @resizeHeight
+    @editor.setOption \maxLines, Infinity
     @editor.commands.addCommand do
       name: \run
       bindKey:
         mac: \Command-Enter
         wind: \Ctrl-Enter
       exec: ~> @run!
+
+  resizeHeight: ~>
+    lines = document.getElementsByClassName \ace_line
+    height = lines[0].clientHeight
+    @setState do
+      height: "#{@editor.session.getLength! * height}px"
+
+  editorStyle: ->
+    if @state.isExpand
+      height: @state.height
+    else
+      display: \none
 
   componentDidMount: ->
     @ace!
@@ -65,22 +76,22 @@ module.exports = class Note extends Component
     DOM.div do
       key: "#{@props.id}-note-container"
       style: @styles.container
-      , [
-        createElement Controller,
-          key: "#{@props.id}-note-controller"
-          id: @props.id
-          run: @run
-          type: @state.type
-          typeChange: @typeChange
-          isExpand: @props.isExpand
-          toggleExpand: @toggleExpand
-        DOM.div do
-          key: "#{@props.id}-note-body"
-          id: "#{@props.id}-note-body"
-          style: if @state.isExpand then @styles.editor else @styles.hideEditor
-        createElement Result,
-          key: "#{@props.id}-note-result"
-          id: @props.id
-          data: @props.result
-          type: @state.type
-      ]
+      createElement do
+        Controller
+        key: "#{@props.id}-note-controller"
+        id: @props.id
+        run: @run
+        type: @state.type
+        typeChange: @typeChange
+        isExpand: @props.isExpand
+        toggleExpand: @toggleExpand
+      DOM.div do
+        key: "#{@props.id}-note-body"
+        id: "#{@props.id}-note-body"
+        style: @editorStyle!
+      createElement do
+        Result
+        key: "#{@props.id}-note-result"
+        id: @props.id
+        data: @props.result
+        type: @state.type
