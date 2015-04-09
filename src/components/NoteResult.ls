@@ -5,8 +5,6 @@ require! {
 module.exports = class NoteResult extends Component
   displayName: \noteResult
   styles:
-    container:
-      minHeight: \300px
     plainResult:
       whiteSpace: \pre
 
@@ -28,5 +26,4 @@ module.exports = class NoteResult extends Component
   render: ->
     DOM.div do
       key: "#{@props.id}-note-result-container"
-      style: @styles.container
-      [@generate!]
+      @generate!
